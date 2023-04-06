@@ -1,0 +1,279 @@
+﻿ /********************** PDSCANR V1.1.1 *******************************/
+ /*********************************************************************/
+ /*                                                                   */
+ /* NAME: PDSCANR - SCAN A PDS FOR GIVEN STRINGS.                     */
+ /*                                                                   */
+ /*********************************************************************/
+ /*                                                                   */
+ /*  (C) COPYRIGHT 2023  EDWARD G LISS      ALL RIGHTS RESERVED       */
+ /*                                                                   */
+ /*  THIS SOURCE CODE AS WELL AS ANY OBJECT CODE RESULTING FROM THIS  */
+ /*  SOURCE CODE MAY BE DISTRIBUTED FREELY PROVIDED NO FEE IS CHARGED */
+ /*  AND FOR NON-COMERCIAL PURPOSES.                                  */
+ /*                                                                   */
+ /*  FOR COMMERCIAL DISTRIBUTION RIGHTS, CONTACT THE COPYRIGHT OWNER. */
+ /*                                                                   */
+ /*********************************************************************/
+ /*                                                                   */
+ /*   THIS PROGRAM READS ALL THE MEMBERS OF A PDS AND SCANS EACH      */
+ /*   EACH RECORD FOR GIVEN STRINGS.  THE STRINGS ARE ENTERED VIA     */
+ /*   THE SYSIN DD.  EACH STRING CAN BE UP TO 8 CHARACTERS AND MUST   */
+ /*   BE ENCLOSED IN QUOTES (I.E. 'STRING').  STRINGS ARE SEPERATED   */
+ /*   BY COMMAS.  NO SEQUENCE NUMBERS IN 73-80.                       */
+ /*                                                                   */
+ /*   THE PDS TO SCAN IS POINTED TO BY DDNAME PDSIN.                  */
+ /*                                                                   */
+ /*   AN EXEC PARM CAN BE GIVEN - THE DEFAULT OF ANY WILL PRINT       */
+ /*   WHEN IT MATCHES ANY OF THE SEARCH STRINGS.  A PARM OF 'ALL'     */
+ /*   WILL PRINT WHEN ALL THE STRINGS ARE FOUND IN A RECORD.          */
+ /*                                                                   */
+ /* REVISION HISTORY                                                  */
+ /* ------  --------------------------------------------------------  */
+ /* V1.0.0  NEW PROGRAM.  OCTOBER, 2012                               */
+ /*                                                                   */
+ /* V1.1.0  BUG FIX.  07/22/2020                                      */
+ /*         PROBLEM:  FIRST RECORD OF EACH MEMBER WAS BEING SKIPPED.  */
+ /*         BUG IN GETPDSP DID NOT RETURN 1ST RECORD ON 1ST CALL.     */
+ /*                                                                   */
+ /* V1.1.1  CLEAN UP. 03/31/2023                                      */
+ /*         MODIFIED TO USE INCLUDES FOR PDSGET_PARAMETERS.           */
+ /*         NO FUNCTIONAL CHANGES.                                    */
+ /*                                                                   */
+ /*********************************************************************/
+
+ PDSCANR:PROCEDURE(EXEC_PARM) OPTIONS(MAIN);
+
+     DECLARE EXEC_PARM            CHAR(100) VARYING;
+     DECLARE LAST_MEMBER          CHAR(8) INITIAL((8)' ');
+     DECLARE PAGE_CTR             INITIAL(0)    FIXED DECIMAL(5,0);
+     DECLARE (ANY_OPTION,       INITIAL('0'B),
+              ALL_OPTION        INITIAL('0'B))  BIT(1) ALIGNED;
+     DECLARE
+        1  WS_MEMBER_COUNT       FIXED BINARY(31) ALIGNED INITIAL(0);
+
+     %INCLUDE GETPDSPA;
+
+     DECLARE
+        1   SCAN_STRS,
+            2  SCAN_TBL_MAX       FIXED BINARY(15,0) INITIAL(0),
+            2  SCAN_TBL(20),
+               3  SCAN_STR        CHAR(8) VARYING,
+               3  SCAN_CTR        FIXED DECIMAL(7,0);
+
+     SCAN_STR(*)='';
+     SCAN_CTR(*)=0;
+     ON ENDPAGE(SYSPRINT)
+     BEGIN;
+        IF PAGE_CTR > 0 THEN PUT PAGE;
+        PAGE_CTR=PAGE_CTR+1;
+        PUT EDIT('PDSCANR V1.1.1','PAGE ',PAGE_CTR)
+                     (A,COL(110),A,F(5));
+        PUT SKIP(2);
+        IF LAST_MEMBER = (8)' ' THEN;
+        ELSE
+        DO;
+            PUT SKIP EDIT('MEMBER ',LAST_MEMBER,' (CONTINUED)')
+               (A,A,A);
+            PUT SKIP(2);
+        END;
+     END;
+1    SIGNAL ENDPAGE(SYSPRINT);
+     CALL P000_LOAD_STR;
+     CALL P100_OPEN_PDS;
+     CALL P600_CLOSE_PDS;
+
+     PUT SKIP EDIT('MEMBER PROCESSED=',WS_MEMBER_COUNT)(A,F(10));
+     DO I=1 TO SCAN_TBL_MAX;
+        PUT SKIP LIST(SCAN_STR(I),'FOUND',SCAN_CTR(I));
+     END;
+     PUT SKIP LIST('PDSCANR CONCLUDED');
+
+-P000_LOAD_STR:PROC;
+     DECLARE WORK_STR  CHAR(8) VARYING;
+     DECLARE E_O_F     BIT(1)  ALIGNED INITIAL('0'B);
+     DECLARE I         FIXED BINARY ALIGNED;
+     IF LENGTH(EXEC_PARM) = 0 THEN
+     DO;
+        PUT SKIP EDIT('NO EXEC PARM FOUND.  DEFAULTING TO ''ANY''')
+            (A);
+        ANY_OPTION='1'B;
+     END;
+     ELSE
+     IF LENGTH(EXEC_PARM)=3 THEN
+     DO;
+        PUT SKIP EDIT('PARM=''',EXEC_PARM,'''') (A,A,A);
+        IF EXEC_PARM = 'ANY' THEN ANY_OPTION='1'B;
+        ELSE
+           IF EXEC_PARM = 'ALL' THEN ALL_OPTION='1'B;
+           ELSE
+              PUT SKIP LIST('INVALID PARM');
+     END;
+     ELSE
+        PUT SKIP LIST('INVALID PARM');
+     PUT SKIP;
+     ON ENDFILE(SYSIN)  E_O_F = '1'B;
+     DO WHILE (E_O_F = '0'B);
+        GET LIST(WORK_STR);
+        IF E_O_F = '0'B THEN
+        DO;
+           IF LENGTH(WORK_STR)=0 THEN
+           DO;
+              PUT SKIP LIST('NULL SEARCH STRING IGNORED');
+           END;
+           ELSE
+           DO;
+              SCAN_TBL_MAX=SCAN_TBL_MAX+1;
+              SCAN_STR(SCAN_TBL_MAX)=WORK_STR;
+           END;
+        END;
+     END;
+     IF SCAN_TBL_MAX=0 THEN
+     DO;
+         PUT SKIP LIST('NO STRINGS TO SCAN FOR');
+         STOP;
+     END;
+     PUT SKIP LIST('THE FOLLOWING STRINGS WILL BE SEARCHED FOR');
+     PUT SKIP(2) LIST(' ','STRING');
+     DO I=1 TO SCAN_TBL_MAX;
+        PUT SKIP LIST(I,SCAN_STR(I));
+     END;
+ END P000_LOAD_STR;
+-P100_OPEN_PDS:PROC;
+     PDSGET_REQUEST = PDSGET_REQUEST_OPEN;
+     PDSGET_MEMBER  = 'PDSIN   ';
+     CALL P900_CALL_GETPDSP;
+     IF PDSGET_RETURN_CODE = 0 THEN
+         CALL P200_START_DIR;
+     ELSE
+     IF PDSGET_RETURN_CODE = 4 THEN
+         PUT SKIP LIST('OPEN FAILED (RC=4)');
+     ELSE
+     IF PDSGET_RETURN_CODE = 8 THEN
+     DO;
+         PUT SKIP LIST('OPEN FAILED (RC=8); EXECUTION TERMINATED');
+         STOP;
+     END;
+ END P100_OPEN_PDS;
+-P200_START_DIR:PROC;
+     PDSGET_REQUEST = PDSGET_REQUEST_START;
+     CALL P900_CALL_GETPDSP;
+     IF PDSGET_RETURN_CODE = 0 THEN
+         CALL P300_NEXT_DIR;
+     ELSE
+     IF PDSGET_RETURN_CODE = 4 THEN
+         PUT SKIP LIST('START FAILED (RC=4)');
+     ELSE
+     IF PDSGET_RETURN_CODE = 8 THEN
+     DO;
+         PUT SKIP LIST('START FAILED (RC=8); EXECUTION TERMINATED');
+         STOP;
+     END;
+ END P200_START_DIR;
+-P300_NEXT_DIR:PROC;
+     PDSGET_RETURN_CODE = 0;
+     DO WHILE(PDSGET_RETURN_CODE = 0);
+         PDSGET_REQUEST = PDSGET_REQUEST_NEXT;
+         CALL P900_CALL_GETPDSP;
+         IF PDSGET_RETURN_CODE = 0 THEN
+         DO;
+             CALL P400_LOCATE_MEMBER;
+             PDSGET_RETURN_CODE = 0;
+         END;
+         ELSE
+         IF PDSGET_RETURN_CODE = 4 THEN
+             PUT SKIP LIST('END OF DIRECTORY (RC=4)');
+         ELSE
+         IF PDSGET_RETURN_CODE = 8 THEN
+         DO;
+             PUT SKIP LIST(
+                          'NEXT FAILED (RC=8); EXECUTION TERMINATED');
+             STOP;
+         END;
+     END; /* DO UNTIL */
+ END P300_NEXT_DIR;
+-P400_LOCATE_MEMBER:PROC;
+     PDSGET_REQUEST = PDSGET_REQUEST_LOCATE;
+     CALL P900_CALL_GETPDSP;
+     IF PDSGET_RETURN_CODE = 0 THEN
+     DO;
+      /* PUT SKIP LIST('MEMBER NAME=',PDSGET_MEMBER); */
+         CALL P500_READ_MEMBER;
+     END;
+     ELSE
+     IF PDSGET_RETURN_CODE = 4 THEN
+         PUT SKIP LIST('MEMBER NOT FOUND (RC=4)');
+     ELSE
+         IF PDSGET_RETURN_CODE = 8 THEN
+         DO;
+             PUT SKIP LIST(
+                       'LOCATE FAILED (RC=8); EXECUTION TERMINATED');
+             STOP;
+         END;
+ END P400_LOCATE_MEMBER;
+-P500_READ_MEMBER:PROC;
+     DECLARE I          FIXED BINARY ALIGNED,
+             HIT_CNT    FIXED DECIMAL(7,0);
+     PDSGET_REQUEST = PDSGET_REQUEST_READ;
+ /************************************ V1.1.0 FIX START **************
+     CALL P900_CALL_GETPDSP;
+ ************************************* V1.1.0 FIX END   *************/
+     WS_MEMBER_COUNT=WS_MEMBER_COUNT+1;
+     IF PDSGET_RETURN_CODE = 0 THEN
+     DO;
+         DO WHILE (PDSGET_RETURN_CODE = 0);
+            CALL P900_CALL_GETPDSP;
+            IF PDSGET_RETURN_CODE = 0 THEN
+            DO;
+               HIT_CNT=0;
+               DO I=1 TO SCAN_TBL_MAX;
+                  IF INDEX(PDSGET_RECORD80,SCAN_STR(I))> 0 THEN
+                  DO;
+                     HIT_CNT=HIT_CNT+1;
+                     SCAN_CTR(I)=SCAN_CTR(I)+1;
+                  END;
+               END;
+               IF (ANY_OPTION & HIT_CNT > 0) |
+                  (ALL_OPTION & HIT_CNT = SCAN_TBL_MAX) THEN
+               DO;
+                  IF LAST_MEMBER = PDSGET_MEMBER THEN;
+                  ELSE
+                  DO;
+                     LAST_MEMBER = PDSGET_MEMBER;
+                     PUT SKIP EDIT('MEMBER ',LAST_MEMBER)
+                                             (A,A);
+                  END;
+                  PUT SKIP EDIT(PDSGET_RECORD80) (X(5),A);
+            END;
+         END;
+     END;
+
+     IF PDSGET_RETURN_CODE = 4 THEN
+      /* PUT SKIP LIST('END OF FILE ON MEMBER (RC=4)') */;
+     ELSE
+         IF PDSGET_RETURN_CODE = 8 THEN
+         DO;
+             PUT SKIP LIST(
+                       'READ FAILED (RC=8); EXECUTION TERMINATED');
+             STOP;
+         END;
+ END P500_READ_MEMBER;
+-P600_CLOSE_PDS:PROC;
+     PDSGET_REQUEST = PDSGET_REQUEST_CLOSE;
+     CALL P900_CALL_GETPDSP;
+     IF PDSGET_RETURN_CODE = 4 THEN
+         PUT SKIP LIST('CLOSE FAILED (RC=4)');
+     ELSE
+     IF PDSGET_RETURN_CODE = 8 THEN
+     DO;
+         PUT SKIP LIST('CLOSE FAILED (RC=8); EXECUTION TERMINATED');
+         STOP;
+     END;
+ END P600_CLOSE_PDS;
+-P900_CALL_GETPDSP:PROC;
+     CALL GETPDSP (PDSGET_REQUEST_1,
+                   PDSGET_MEMBER_1,
+                   PDSGET_RECORD80_1,
+                   PDSGET_RETURN_CODE_1);
+ END P900_CALL_GETPDSP;
+
+ END PDSCANR;

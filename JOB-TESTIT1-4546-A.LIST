@@ -1,0 +1,580 @@
+                        TTTTTTTTTTTT  EEEEEEEEEEEE   SSSSSSSSSS   TTTTTTTTTTTT   IIIIIIIIII   TTTTTTTTTTTT       11
+                       TTTTTTTTTTTT  EEEEEEEEEEEE  SSSSSSSSSSSS  TTTTTTTTTTTT   IIIIIIIIII   TTTTTTTTTTTT      111
+                           TT       EE            SS        SS       TT            II            TT          1111
+                          TT       EE            SS                 TT            II            TT            11
+                         TT       EE            SSS                TT            II            TT            11
+                        TT       EEEEEEEE       SSSSSSSSS         TT            II            TT            11
+                       TT       EEEEEEEE        SSSSSSSSS        TT            II            TT            11
+                      TT       EE                     SSS       TT            II            TT            11
+                     TT       EE                      SS       TT            II            TT            11
+                    TT       EE            SS        SS       TT            II            TT            11
+                   TT       EEEEEEEEEEEE  SSSSSSSSSSSS       TT        IIIIIIIIII        TT        1111111111
+                  TT       EEEEEEEEEEEE   SSSSSSSSSS        TT        IIIIIIIIII        TT        1111111111
+
+
+
+                    JJJJJJJJJJ        444     555555555555        444      6666666666                  AAAAAAAAAA
+                    JJJJJJJJJJ       4444     555555555555       4444     666666666666                AAAAAAAAAAAA
+                        JJ          44 44     55                44 44     66        66                AA        AA
+                        JJ         44  44     55               44  44     66                          AA        AA
+                        JJ        44   44     55              44   44     66                          AA        AA
+                        JJ       44444444444  555555555      44444444444  66666666666                 AAAAAAAAAAAA
+                        JJ      444444444444  5555555555    444444444444  666666666666                AAAAAAAAAAAA
+                        JJ             44              55          44     66        66                AA        AA
+                  JJ    JJ             44               55         44     66        66                AA        AA
+                  JJ    JJ             44               55         44     66        66                AA        AA
+                  JJJJJJJJ             44     555555555555         44     666666666666                AA        AA
+                   JJJJJJ              44     55555555555          44      6666666666                 AA        AA
+
+
+****A  START  JOB 4546  TESTIT1                         ROOM        9.02.43 AM 06 APR 23  PRINTER1  SYS TK4-  JOB 4546  START  A****
+****A  START  JOB 4546  TESTIT1                         ROOM        9.02.43 AM 06 APR 23  PRINTER1  SYS TK4-  JOB 4546  START  A****
+****A  START  JOB 4546  TESTIT1                         ROOM        9.02.43 AM 06 APR 23  PRINTER1  SYS TK4-  JOB 4546  START  A****
+****A  START  JOB 4546  TESTIT1                         ROOM        9.02.43 AM 06 APR 23  PRINTER1  SYS TK4-  JOB 4546  START  A****
+                                                J E S 2   J O B   L O G
+
+
+09.02.43 JOB 4546  $HASP373 TESTIT1  STARTED - INIT  1 - CLASS A - SYS TK4-
+09.02.43 JOB 4546  IEF403I TESTIT1 - STARTED - TIME=09.02.43
+09.02.43 JOB 4546  IEFACTRT - Stepname  Procstep  Program   Retcode
+09.02.43 JOB 4546  TESTIT1    S1                  PDSUNLDC  RC= 0000
+09.02.43 JOB 4546  IEF404I TESTIT1 - ENDED - TIME=09.02.43
+09.02.43 JOB 4546  $HASP395 TESTIT1  ENDED
+
+
+------ JES2 JOB STATISTICS ------
+
+
+ 06 APR 23 JOB EXECUTION DATE
+
+
+        14 CARDS READ
+
+
+       494 SYSOUT PRINT RECORDS
+
+
+         0 SYSOUT PUNCH RECORDS
+
+
+      0.00 MINUTES EXECUTION TIME
+    1     //TESTIT1 JOB CLASS=A,MSGCLASS=A,MSGLEVEL=(1,1),NOTIFY=HERC01,          JOB 4546
+          //    USER=HERC01,PASSWORD=
+          ***
+          ***
+          ***   TEST/DEMO PDSUTIL
+          ***
+          ***
+    2     //S1   EXEC PGM=PDSUNLDC
+    3     //STEPLIB DD DSN=HERC01.PDSUTIL.LOADLIB,DISP=SHR
+    4     //SYSOUT   DD SYSOUT=*
+    5     //PRINTER  DD SYSOUT=*
+    6     //PDSIN    DD DSN=HERC01.PDSUTIL.COB,DISP=SHR
+    7     //CARDOUT  DD SYSOUT=*
+          ***
+IEF236I ALLOC. FOR TESTIT1 S1
+IEF237I 240  ALLOCATED TO STEPLIB
+IEF237I 240  ALLOCATED TO SYS00034
+IEF237I JES2 ALLOCATED TO SYSOUT
+IEF237I JES2 ALLOCATED TO PRINTER
+IEF237I 240  ALLOCATED TO PDSIN
+IEF237I JES2 ALLOCATED TO CARDOUT
+IEF142I TESTIT1 S1 - STEP WAS EXECUTED - COND CODE 0000
+IEF285I   HERC01.PDSUTIL.LOADLIB                       KEPT          *--------0
+IEF285I   VOL SER NOS= PUB000.
+IEF285I   SYS1.UCAT.TSO                                KEPT          *--------0
+IEF285I   VOL SER NOS= PUB000.
+IEF285I   JES2.JOB04546.SO0101                         SYSOUT
+IEF285I   JES2.JOB04546.SO0102                         SYSOUT
+IEF285I   HERC01.PDSUTIL.COB                           KEPT          *-------92
+IEF285I   VOL SER NOS= PUB000.
+IEF285I   JES2.JOB04546.SO0103                         SYSOUT
+IEF373I STEP /S1      / START 23096.0902
+IEF374I STEP /S1      / STOP  23096.0902 CPU    0MIN 00.02SEC SRB    0MIN 00.01SEC VIRT    20K SYS   204K
+************************************************************************************************************************************
+*     1. Jobstep of job: TESTIT1     Stepname: S1          Program name: PDSUNLDC   Executed on 06.04.23 from 09.02.43 to 09.02.43 *
+*         elapsed time  00:00:00,15                      CPU-Identifier:  TK4-           Page-in:      0                           *
+*             CPU time  00:00:00,03               Virtual Storage used:     20K         Page-out:      0                           *
+*           corr. CPU:  00:00:00,03   CPU time has been corrected by  1 / 1,0  multiplier                                          *
+*                                                                                                                                  *
+*     I/O Operation                                                                                                                *
+*     Number of records read via DD * or DD DATA:      0                                                                           *
+*     240.......0 240.......0 DMY.......0 DMY.......0 240......92 DMY.......0                                                      *
+*                                                                                                                                  *
+*                                          Charge for step (w/o SYSOUT):          0,05                                             *
+************************************************************************************************************************************
+IEF375I  JOB /TESTIT1 / START 23096.0902
+IEF376I  JOB /TESTIT1 / STOP  23096.0902 CPU    0MIN 00.02SEC SRB    0MIN 00.01SEC
+
+MEMBER NAME=DATECNVC
+END OF FILE ON MEMBER (RC=4)
+MEMBER NAME=GETPDSPA
+END OF FILE ON MEMBER (RC=4)
+MEMBER NAME=PDSUNLDC
+END OF FILE ON MEMBER (RC=4)
+END OF DIRECTORY (RC=4)
+MEMBER PROCESSED=000000003
+PDSUNLOD CONCLUDED
+1PDSUNLDC V1.2.0
+0MEMBER    USERID    CREATED    UPDATED      TIME   COMMENTS
+ DATECNVC
+ GETPDSPA
+ PDSUNLDC
+./  ADD NAME=DATECNVC
+      ******************* DATECNVC V1.0.0 *****************************
+      *****************************************************************
+      *                                                               *
+      * NAME: DATECNVC - PARM LIST DEFINITIONS FOR DATECNV            *
+      *                                                               *
+      * NOTE: THERE IS A PL/1 VERSION OF THIS.  THEY SHOULD BE KEPT   *
+      *       IN SYNC.                                                *
+      *                                                               *
+      *****************************************************************
+      *                                                               *
+      *  (C) COPYRIGHT 2023 EDWARD G LISS   ALL RIGHTS RESERVED       *
+      *                                                               *
+      *  THIS SOURCE CODE AS WELL AS ANY OBJECT CODE RESULTING FROM   *
+      *  THIS SOURCE CODE MAY BE DISTRIBUTED FREELY PROVIDED NO FEE   *
+      *  IS CHARGED AND FOR NON-COMERCIAL PURPOSES.                   *
+      *                                                               *
+      *  FOR COMMERCIAL DISTRIBUTION RIGHTS, CONTACT THE COPYRIGHT    *
+      *  OWNER.                                                       *
+      *                                                               *
+      *****************************************************************
+      *                                                               *
+      * REVISION HISTORY                                              *
+      * ------  ----------------------------------------------------- *
+      * V1.1.0  INITIAL VERSION.                                      *
+      *                                                               *
+      *****************************************************************
+
+       01  DATECNV-PARM.
+           05  DC-RETURN-CODE          PIC S9(8) COMP.
+           05  DC-INPUT-FORMAT         PIC X(8).
+           05  DC-INPUT-DATE           PIC X(10).
+           05  DC-OUTPUT-FORMAT        PIC X(8).
+           05  DC-OUTPUT-DATE          PIC X(10).
+      ******************* DATECNVC V1.0.0  END ************************
+./  ADD NAME=GETPDSPA
+      ******************* GETPDSPA V1.2.0 *****************************
+      *****************************************************************
+      *                                                               *
+      * NAME: GETPDSPA - PARM LIST DEFINITIONS FOR GETPDS V1.3.0      *
+      *                                                               *
+      * NOTE: THERE IS A PL/1 VERSION OF THIS.  THEY SHOULD BE KEPT   *
+      *       IN SYNC.                                                *
+      *                                                               *
+      *****************************************************************
+      *                                                               *
+      *  (C) COPYRIGHT 2017 EDWARD G LISS   ALL RIGHTS RESERVED       *
+      *  (C) COPYRIGHT 2023 EDWARD G LISS   ALL RIGHTS RESERVED       *
+      *                                                               *
+      *  THIS SOURCE CODE AS WELL AS ANY OBJECT CODE RESULTING FROM   *
+      *  THIS SOURCE CODE MAY BE DISTRIBUTED FREELY PROVIDED NO FEE   *
+      *  IS CHARGED AND FOR NON-COMERCIAL PURPOSES.                   *
+      *                                                               *
+      *  FOR COMMERCIAL DISTRIBUTION RIGHTS, CONTACT THE COPYRIGHT    *
+      *  OWNER.                                                       *
+      *                                                               *
+      *****************************************************************
+      *                                                               *
+      * REVISION HISTORY                                              *
+      * ------  ----------------------------------------------------- *
+      * V1.1.0  INITIAL VERSION.                                      *
+      * V1.2.0  ADDED THE DEFINITION OF MEMBERS STATS AND ADDED       *
+      *         WORK AREAS FOR STATISTICS CODE CONVERSION.            *
+      *                                                               *
+      *****************************************************************
+       01  PDSGET-PARAMETERS.
+           02  PDSGET-REQUEST          PIC S9(08)  COMP.
+           02  PDSGET-MEMBER           PIC X(08).
+           02  PDSGET-RECORD           PIC X(255).
+           02  FILLER                  REDEFINES PDSGET-RECORD.
+               03  PDSGET-RECORD80     PIC X(80).
+               03  FILLER              PIC X(75).
+           02  FILLER                  REDEFINES PDSGET-RECORD.
+               03  PDS-C               PIC X.
+               03  PDS-VERSION         PIC X.
+               03  PDS-MOD             PIC X.
+               03  PDS-NULL            PIC XX.
+               03  PDS-DATE-CREATED    PIC S9(7) COMP-3.
+               03  PDS-DATE-UPDATED    PIC S9(7) COMP-3.
+               03  PDS-TIME-CHANGED-H  PIC X.
+               03  PDS-TIME-CHANGED-M  PIC X.
+               03  PDS-CURRENT-LINES   PIC S9(4) COMP.
+               03  PDS-INITIAL-LINES   PIC S9(4) COMP.
+               03  PDS-CHANGED-LINES   PIC S9(4) COMP.
+               03  PDS-USER-ID         PIC X(8).
+
+       01  PDSGET-REQUEST-CODES.
+           02  PDSGET-REQUEST-OPEN     PIC S9(08)  COMP    VALUE +0.
+           02  PDSGET-REQUEST-START    PIC S9(08)  COMP    VALUE +1.
+           02  PDSGET-REQUEST-LOCATE   PIC S9(08)  COMP    VALUE +4.
+           02  PDSGET-REQUEST-NEXT     PIC S9(08)  COMP    VALUE +5.
+           02  PDSGET-REQUEST-READ     PIC S9(08)  COMP    VALUE +8.
+           02  PDSGET-REQUEST-CLOSE    PIC S9(08)  COMP    VALUE +12.
+
+      *
+      * PDSGET_RETURN_CODE DEFINITIONS
+      *       RETURN_CODE 0 = SUCCESSFUL COMPLETION OF REQUEST
+      *       RETURN_CODE 8 = SERIOUS ERROR.
+      *       RETURN_CODE 4 = DEPENDS ON REQUEST CODE
+      *            REQUEST_CODE    MEANING
+      *                  0         PDS COULD NOT BE OPENED.
+      *                  1         PDS COULD NOT BE OPENED.
+      *                  4         MEMBER NOT FOUND.
+      *                  5         END OF DIRECTORY.
+      *                  8         END OF CURRENT MEMBER.
+      *
+
+       01  PDSGET-WORK-AREAS.
+      *
+      *   PDS-TIME-CHANGED -H AND -M ARE UNSIGNED PACKED DECIMALS
+      *   THEY MUST TO CONVERTED TO SIGNED PACK DECIMAL TO USE THEM.
+      *   THE FOLLOWING AREAS CAN BE USED FOR THAT.
+      *
+      *   MOVE PDS-TIME-CHANGED-? TO PDS-TIME-CHAR.
+      *   MOVE PDS-TIME-WORK      TO PDS-4 DIGIT-TIME.
+      *
+      *   PDS-TIME WILL HAVE A USABLE FORM OF THE HOUR OR MIN.
+      *
+      *   THIS CONVERSION MUST TAKE PLACE FOR BOTH THE -H AND =M
+      *   PDS-TIME-CHANGED- FIELDS.
+      *
+           05  PDS-TIME-CONVERSION.
+               10 PDS-TIME-WORK        PIC S9(5) COMP-3 VALUE ZERO.
+           05  FILLER                  REDEFINES PDS-TIME-CONVERSION.
+               10  FILLER              PIC X.
+               10  PDS-TIME-CHAR       PIC X.
+               10  FILLER              PIC X.
+
+           05  PDS-4-DIGIT-TIME        PIC 9(4).
+           05  FILLER                  REDEFINES PDS-4-DIGIT-TIME.
+               10  FILLER              PIC X.
+               10  PDS-TIME            PIC 99.
+               10  FILLER              PIC X.
+
+      ******************* GETPDSPA V1.2.0 END *************************
+./  ADD NAME=PDSUNLDC
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PDSUNLDC.
+       AUTHOR. ED LISS.
+       DATE-WRITTEN. MARCH, 2010.
+       DATE-COMPILED.
+       REMARKS. THIS PROGRAM READS A PDS AND WRITES EACH MEMBER WITH
+            AN ./ ADD SUITABLE FOR RELOADING USING IEBUPDTX OR
+            IEBUPDTE.  THE './ ADD NAME=XXXXXXXX' IS GENERATED FOR
+            EACH MEMBER.  IF A EXEC_CARD PARM IS PASSED, THE PARM
+            IS APPENDED I.E.  './ ADD NAME=XXXXXXXX,PARM'.  USING
+            THE PARM ENABLES UTILITY CONTROL STATEMENTS FOR
+            IEBUPDTE OR IEBUPDTX TO BE GENERATED.
+
+            VERSION     DATE     COMMENTS
+            -------   ---------  ---------------------------------
+             1.0.0      03/2010  ORIGINAL VERSION
+             1.1.0    06/17/2010 CHANGED SO ONLY NAME PARM
+                                 IS GENERATED.  IF AN EXEC PARM
+                                 IS PASSED, IT WILL BE ADDED TO
+                                 THE ./ ADD NAME=,PARM
+             1.2.0    03/21/2021 CLEANED UP CODE AND ADDED
+                                 ISPF/RPF STATS TO REPORT.
+
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       OBJECT-COMPUTER. IBM-370.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT CARD-FILE   ASSIGN TO UT-S-CARDOUT.
+           SELECT PRINT-FILE  ASSIGN TO UT-S-PRINTER.
+
+       DATA DIVISION.
+       FILE SECTION.
+       FD  CARD-FILE
+           LABEL RECORDS ARE STANDARD
+           RECORDING MODE IS F
+           BLOCK CONTAINS 0 RECORDS.
+       01  WS-CARD-OUT                 PIC X(80).
+
+       FD  PRINT-FILE
+           LABEL RECORDS ARE STANDARD
+           RECORDING MODE IS F
+           BLOCK CONTAINS 0 RECORDS.
+       01  PF-PRINT-LINE               PIC X(133).
+
+       WORKING-STORAGE SECTION.
+
+       77  WS-MEMBER-COUNT             PIC 9(9)            VALUE +0.
+       77  WS-CHAR-INDEX               PIC S9(4) COMP SYNC.
+       77  WS-PARM-INDEX               PIC S9(4) COMP SYNC.
+       77  WS-LINE-CNT                 PIC S9(4) COMP SYNC VALUE +57.
+       77  WS-LINE-MAX                 PIC S9(4) COMP SYNC VALUE +56.
+
+       01  WS-ADD-REC.
+           05  FILLER                  PIC X(8)    VALUE './  ADD '.
+           05  FILLER                  PIC X(5)    VALUE 'NAME='.
+           05  WS-PARM-AREA            PIC X(67)   VALUE SPACES.
+           05  FILLER            REDEFINES WS-PARM-AREA.
+              10  WS-MEMBER-CHAR       PIC X OCCURS 67 TIMES.
+
+       01  PH-PAGE-HEADING.
+           05  FILLER                  PIC X(100) VALUE
+               '1PDSUNLDC V1.2.0'.
+       01  PH-LINE-2.
+           05  FILLER                   PIC X(49)  VALUE
+               '0MEMBER    USERID    CREATED    UPDATED      TIME'.
+           05  FILLER                   PIC X(11)  VALUE
+               '   COMMENTS'.
+       01  DL-DETAIL-LINE.
+           05  CC                       PIC X.
+           05  DL-MEMBER                PIC X(8).
+           05  FILLER                   PIC XX.
+           05  DL-USERID                PIC X(8).
+           05  FILLER                   PIC XX.
+           05  DL-CREATED               PIC 9999B99B99.
+           05  FILLER                   PIC X.
+           05  DL-UPDATED               PIC 9999B99B99.
+           05  FILLER                   PIC XX.
+           05  DL-TIME-H                PIC 99.
+           05  DL-TIME-SEP              PIC X.
+           05  DL-TIME-M                PIC 99.
+           05  FILLER                   PIC XX.
+           05  DL-COMMENTS              PIC X(50).
+
+       01  WS-DATE-EDIT-01.
+           05  WS-DATE-EDIT-X           PIC X(8).
+           05  FILLER         REDEFINES WS-DATE-EDIT-X.
+               10  WS-DATE-EDIT         PIC 9(8).
+           EJECT
+       01  DATECNV-PARM COPY DATECNVC.
+      ***#INCLUDE DATECNVC.COB
+           EJECT
+       01  PDSGET-PARAMETERS COPY GETPDSPA.
+      ***#INCLUDE GETPDSPA.COB
+       EJECT
+       LINKAGE SECTION.
+       01  EXEC-PARM.
+           05  EXEC-LEN               PIC S9(4)  COMP.
+           05  EXEC-CHAR              OCCURS 100 TIMES
+                                      PIC X.
+       PROCEDURE DIVISION USING EXEC-PARM.
+
+       000-INITIATE.
+
+           OPEN OUTPUT CARD-FILE, PRINT-FILE.
+           IF EXEC-LEN > 55
+               DISPLAY 'EXEC PARM EXCEEDS 55 CHARACTERS'
+               MOVE 16 TO RETURN-CODE
+               STOP RUN.
+           IF EXEC-LEN > ZERO
+              PERFORM 000-MOVE-PARM
+                 VARYING WS-CHAR-INDEX FROM 1 BY 1
+                   UNTIL WS-CHAR-INDEX > EXEC-LEN
+              DISPLAY 'WITH EXEC PARM ' WS-PARM-AREA.
+           PERFORM 100-OPEN-PDS.
+           PERFORM 600-CLOSE-PDS.
+
+           DISPLAY 'MEMBER PROCESSED=' WS-MEMBER-COUNT.
+           DISPLAY 'PDSUNLOD CONCLUDED'.
+           CLOSE CARD-FILE, PRINT-FILE.
+
+           GOBACK.
+
+       000-MOVE-PARM.
+           MOVE EXEC-CHAR(WS-CHAR-INDEX) TO
+                WS-MEMBER-CHAR(WS-CHAR-INDEX).
+
+       100-OPEN-PDS.
+           MOVE PDSGET-REQUEST-OPEN TO PDSGET-REQUEST.
+           MOVE 'PDSIN  ' TO PDSGET-MEMBER.
+           PERFORM 900-CALL-PDSGET.
+           IF RETURN-CODE EQUAL 0
+               PERFORM 200-START-DIR
+           ELSE
+           IF RETURN-CODE EQUAL 4
+               DISPLAY 'OPEN FAILED (RC=4)'
+           ELSE
+           IF RETURN-CODE EQUAL 8
+               DISPLAY 'OPEN FAILED (RC=8); EXECUTION TERMINATED'
+               STOP RUN.
+
+       200-START-DIR.
+           MOVE PDSGET-REQUEST-START TO PDSGET-REQUEST.
+           PERFORM 900-CALL-PDSGET.
+           IF RETURN-CODE EQUAL 0
+               PERFORM 300-NEXT-DIR
+           ELSE
+           IF RETURN-CODE EQUAL 4
+               DISPLAY 'START FAILED (RC=4)'
+           ELSE
+           IF RETURN-CODE EQUAL 8
+               DISPLAY 'START FAILED (RC=8); EXECUTION TERMINATED'
+               STOP RUN.
+
+       300-NEXT-DIR.
+           MOVE ZERO TO RETURN-CODE.
+           PERFORM 310-NEXT-DIR
+               UNTIL RETURN-CODE NOT = ZERO.
+       310-NEXT-DIR.
+           MOVE PDSGET-REQUEST-NEXT  TO PDSGET-REQUEST.
+           PERFORM 900-CALL-PDSGET.
+           IF RETURN-CODE EQUAL 0
+               DISPLAY 'MEMBER NAME=' PDSGET-MEMBER
+               PERFORM 400-LOCATE-MEMBER
+               MOVE ZERO TO RETURN-CODE
+           ELSE
+           IF RETURN-CODE EQUAL 4
+               DISPLAY 'END OF DIRECTORY (RC=4)'
+           ELSE
+           IF RETURN-CODE EQUAL 8
+               DISPLAY 'NEXT FAILED (RC=8); EXECUTION TERMINATED'
+               STOP RUN.
+
+       400-LOCATE-MEMBER.
+           MOVE PDSGET-REQUEST-LOCATE TO PDSGET-REQUEST.
+           PERFORM 900-CALL-PDSGET.
+           IF RETURN-CODE EQUAL 0
+               PERFORM 700-PROCESS-STATS THRU 700-EXIT
+               PERFORM 500-READ-MEMBER
+           ELSE
+           IF RETURN-CODE EQUAL 4
+               DISPLAY 'MEMBER NOT FOUND (RC=4)'
+           ELSE
+           IF RETURN-CODE EQUAL 8
+               DISPLAY 'LOCATE FAILED (RC=8); EXECUTION TERMINATED'
+               STOP RUN.
+
+       500-READ-MEMBER.
+           MOVE PDSGET-REQUEST-READ TO PDSGET-REQUEST.
+           IF EXEC-LEN = ZERO
+               MOVE PDSGET-MEMBER   TO WS-PARM-AREA
+           ELSE
+               PERFORM 501-MOVE-TEXT.
+           WRITE WS-CARD-OUT FROM WS-ADD-REC.
+           ADD 1 TO WS-MEMBER-COUNT.
+           PERFORM 900-CALL-PDSGET.
+           PERFORM 510-READ-MEMBER
+               UNTIL RETURN-CODE NOT EQUAL 0.
+           IF RETURN-CODE EQUAL 4
+               DISPLAY 'END OF FILE ON MEMBER (RC=4)'
+           ELSE
+           IF RETURN-CODE EQUAL 8
+               DISPLAY 'READ FAILED (RC=8); EXECUTION TERMINATED'
+               STOP RUN.
+
+       501-MOVE-TEXT.
+           MOVE PDSGET-MEMBER       TO WS-PARM-AREA.
+           MOVE 1                   TO WS-CHAR-INDEX.
+           PERFORM 502-FIND-BLANK
+              UNTIL WS-MEMBER-CHAR(WS-CHAR-INDEX) = ' '.
+           MOVE ','                 TO WS-MEMBER-CHAR(WS-CHAR-INDEX).
+           ADD 1                    TO WS-CHAR-INDEX.
+           PERFORM 503-MOVE-PARM
+              VARYING WS-PARM-INDEX FROM 1 BY 1
+                UNTIL WS-PARM-INDEX > EXEC-LEN.
+
+       502-FIND-BLANK.
+           ADD 1                    TO WS-CHAR-INDEX.
+
+       503-MOVE-PARM.
+           MOVE EXEC-CHAR (WS-PARM-INDEX) TO
+                WS-MEMBER-CHAR (WS-CHAR-INDEX).
+           ADD 1                    TO WS-CHAR-INDEX.
+
+       510-READ-MEMBER.
+           WRITE WS-CARD-OUT FROM PDSGET-RECORD80.
+           PERFORM 900-CALL-PDSGET.
+
+       600-CLOSE-PDS.
+           MOVE PDSGET-REQUEST-CLOSE TO PDSGET-REQUEST.
+           PERFORM 900-CALL-PDSGET.
+           IF RETURN-CODE EQUAL 4
+               DISPLAY 'CLOSE FAILED (RC=4)'
+           ELSE
+           IF RETURN-CODE EQUAL 8
+               DISPLAY 'CLOSE FAILED (RC=8); EXECUTION TERMINATED'
+               STOP RUN.
+
+       700-PROCESS-STATS.
+           MOVE SPACES             TO DL-DETAIL-LINE.
+           MOVE PDSGET-MEMBER      TO DL-MEMBER.
+           MOVE PDS-USER-ID        TO DL-USERID.
+           IF PDS-USER-ID = SPACES
+               GO TO 700-PRINT.
+           MOVE PDS-DATE-CREATED   TO DC-INPUT-DATE.
+           MOVE 'YYYYDDD '         TO DC-INPUT-FORMAT.
+           MOVE 'YYYYMMDD'         TO DC-OUTPUT-FORMAT.
+           CALL 'DATECNV'  USING   DATECNV-PARM.
+           MOVE DC-OUTPUT-DATE     TO WS-DATE-EDIT-X.
+           MOVE WS-DATE-EDIT       TO DL-CREATED.
+           EXAMINE DL-CREATED   REPLACING ALL  ' ' BY '/'.
+           MOVE PDS-DATE-UPDATED   TO DC-INPUT-DATE.
+           MOVE 'YYYYDDD '         TO DC-INPUT-FORMAT.
+           MOVE 'YYYYMMDD'         TO DC-OUTPUT-FORMAT.
+           CALL 'DATECNV'  USING   DATECNV-PARM.
+           MOVE DC-OUTPUT-DATE     TO WS-DATE-EDIT-X.
+           MOVE WS-DATE-EDIT       TO DL-UPDATED.
+           EXAMINE DL-UPDATED   REPLACING ALL  ' ' BY '/'.
+
+           MOVE ZERO               TO PDS-TIME-WORK.
+           MOVE PDS-TIME-CHANGED-H TO PDS-TIME-CHAR.
+           MOVE PDS-TIME-WORK      TO PDS-4-DIGIT-TIME.
+           MOVE PDS-TIME           TO DL-TIME-H.
+           MOVE ZERO               TO PDS-TIME-WORK.
+           MOVE PDS-TIME-CHANGED-M TO PDS-TIME-CHAR.
+           MOVE PDS-TIME-WORK      TO PDS-4-DIGIT-TIME.
+           MOVE PDS-TIME           TO DL-TIME-M.
+           MOVE ':'                TO DL-TIME-SEP.
+
+       700-PRINT.
+           PERFORM 800-PRINT-DETAIL.
+       700-EXIT.
+           EXIT.
+
+       800-PRINT-DETAIL.
+           IF WS-LINE-CNT > WS-LINE-MAX
+               WRITE PF-PRINT-LINE FROM PH-PAGE-HEADING
+               WRITE PF-PRINT-LINE FROM PH-LINE-2
+               MOVE 3     TO WS-LINE-CNT.
+           WRITE PF-PRINT-LINE FROM DL-DETAIL-LINE.
+           ADD 1 TO WS-LINE-CNT.
+
+       900-CALL-PDSGET.
+           CALL 'GETPDS'   USING PDSGET-REQUEST,
+                                 PDSGET-MEMBER,
+                                 PDSGET-RECORD.
+                        TTTTTTTTTTTT  EEEEEEEEEEEE   SSSSSSSSSS   TTTTTTTTTTTT   IIIIIIIIII   TTTTTTTTTTTT       11
+                       TTTTTTTTTTTT  EEEEEEEEEEEE  SSSSSSSSSSSS  TTTTTTTTTTTT   IIIIIIIIII   TTTTTTTTTTTT      111
+                           TT       EE            SS        SS       TT            II            TT          1111
+                          TT       EE            SS                 TT            II            TT            11
+                         TT       EE            SSS                TT            II            TT            11
+                        TT       EEEEEEEE       SSSSSSSSS         TT            II            TT            11
+                       TT       EEEEEEEE        SSSSSSSSS        TT            II            TT            11
+                      TT       EE                     SSS       TT            II            TT            11
+                     TT       EE                      SS       TT            II            TT            11
+                    TT       EE            SS        SS       TT            II            TT            11
+                   TT       EEEEEEEEEEEE  SSSSSSSSSSSS       TT        IIIIIIIIII        TT        1111111111
+                  TT       EEEEEEEEEEEE   SSSSSSSSSS        TT        IIIIIIIIII        TT        1111111111
+
+
+
+                    JJJJJJJJJJ        444     555555555555        444      6666666666                  AAAAAAAAAA
+                    JJJJJJJJJJ       4444     555555555555       4444     666666666666                AAAAAAAAAAAA
+                        JJ          44 44     55                44 44     66        66                AA        AA
+                        JJ         44  44     55               44  44     66                          AA        AA
+                        JJ        44   44     55              44   44     66                          AA        AA
+                        JJ       44444444444  555555555      44444444444  66666666666                 AAAAAAAAAAAA
+                        JJ      444444444444  5555555555    444444444444  666666666666                AAAAAAAAAAAA
+                        JJ             44              55          44     66        66                AA        AA
+                  JJ    JJ             44               55         44     66        66                AA        AA
+                  JJ    JJ             44               55         44     66        66                AA        AA
+                  JJJJJJJJ             44     555555555555         44     666666666666                AA        AA
+                   JJJJJJ              44     55555555555          44      6666666666                 AA        AA
+
+
+****A   END   JOB 4546  TESTIT1                         ROOM        9.02.43 AM 06 APR 23  PRINTER1  SYS TK4-  JOB 4546   END   A****
+****A   END   JOB 4546  TESTIT1                         ROOM        9.02.43 AM 06 APR 23  PRINTER1  SYS TK4-  JOB 4546   END   A****
+****A   END   JOB 4546  TESTIT1                         ROOM        9.02.43 AM 06 APR 23  PRINTER1  SYS TK4-  JOB 4546   END   A****
+****A   END   JOB 4546  TESTIT1                         ROOM        9.02.43 AM 06 APR 23  PRINTER1  SYS TK4-  JOB 4546   END   A****
+

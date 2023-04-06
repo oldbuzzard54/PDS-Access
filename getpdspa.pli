@@ -1,0 +1,114 @@
+﻿ /********************** GETPDSPA V1.2.0 ******************************/
+ /*********************************************************************/
+ /*                                                                   */
+ /* NAME: GETPDSPA - PARM LIST DEFINITIONS FOR GETPDS V1.3.0          */
+ /*                                                                   */
+ /* NOTE: THERE IS A COBOL VERSION OF THIS.  THEY SHOULD BE KEPT      */
+ /*       IN SYNC.                                                    */
+ /*                                                                   */
+ /*********************************************************************/
+ /*                                                                   */
+ /*  (C) COPYRIGHT 2017 EDWARD G LISS   ALL RIGHTS RESERVED           */
+ /*  (C) COPYRIGHT 2023 EDWARD G LISS   ALL RIGHTS RESERVED           */
+ /*                                                                   */
+ /*  THIS SOURCE CODE AS WELL AS ANY OBJECT CODE RESULTING FROM THIS  */
+ /*  SOURCE CODE MAY BE DISTRIBUTED FREELY PROVIDED NO FEE IS CHARGED */
+ /*  AND FOR NON-COMERCIAL PURPOSES.                                  */
+ /*                                                                   */
+ /*  FOR COMMERCIAL DISTRIBUTION RIGHTS, CONTACT THE COPYRIGHT OWNER. */
+ /*                                                                   */
+ /*********************************************************************/
+ /*                                                                   */
+ /* REVISION HISTORY                                                  */
+ /* ------  --------------------------------------------------------  */
+ /* V1.1.0  INITIAL VERSION.                                          */
+ /* V1.2.0  ADDED THE DEFINITION OF MEMBERS STATS AND ADDED           */
+ /*         WORK AREAS FOR STATISTICS CODE CONVERSION.                */
+ /*                                                                   */
+ /*********************************************************************/
+
+     DECLARE
+        1  PDSGET_PARAMETERS   STATIC ALIGNED,
+            2  PDSGET_REQUEST_OPEN   INITIAL(0)  FIXED BINARY(31),
+            2  PDSGET_REQUEST_START  INITIAL(1)  FIXED BINARY(31),
+            2  PDSGET_REQUEST_LOCATE INITIAL(4)  FIXED BINARY(31),
+            2  PDSGET_REQUEST_NEXT   INITIAL(5)  FIXED BINARY(31),
+            2  PDSGET_REQUEST_READ   INITIAL(8)  FIXED BINARY(31),
+            2  PDSGET_REQUEST_CLOSE  INITIAL(12) FIXED BINARY(31);
+     DECLARE
+        1   PDSGET_REQUEST_1      STATIC,
+            2  PDSGET_REQUEST     FIXED BINARY(31),
+        1   PDSGET_MEMBER_1       STATIC,
+            2  PDSGET_MEMBER      CHAR(8),     /* DDNAME FOR OPEN */
+        1   PDSGET_RECORD80_1     STATIC,
+            2  PDSGET_RECORD80    CHAR(80),
+        1   PDSGET_RETURN_CODE_1  STATIC,
+            2  PDSGET_RETURN_CODE FIXED BINARY(31);
+ /*********************************************************************/
+ /*                                                                   */
+ /* PDSGET_RETURN_CODE DEFINITIONS                                    */
+ /*       RETURN_CODE 0 = SUCCESSFUL COMPLETION OF REQUEST            */
+ /*       RETURN_CODE 8 = SERIOUS ERROR.                              */
+ /*       RETURN_CODE 4 = DEPENDS ON REQUEST CODE                     */
+ /*            REQUEST_CODE    MEANING                                */
+ /*                  0         PDS COULD NOT BE OPENED.               */
+ /*                  1         PDS COULD NOT BE OPENED.               */
+ /*                  4         MEMBER NOT FOUND.                      */
+ /*                  5         END OF DIRECTORY.                      */
+ /*                  8         END OF CURRENT MEMBER.                 */
+ /*                                                                   */
+ /*********************************************************************/
+     DECLARE
+        PDSGET_PTR   POINTER,
+        1  PDSGET_STATISTICS          BASED(PDSGET_PTR),
+           2  PDS_C                      CHAR(1),
+           2  PDS_VERSION                CHAR(1),
+           2  PDS_MOD                    CHAR(1),
+           2  PDS_NULL                   CHAR(2),
+           2  PDS_DATE_CREATED           FIXED DECIMAL(7,0),
+           2  PDS_DATE_UPDATED           FIXED DECIMAL(7,0),
+           2  PDS_TIME_CHANGED_H         CHAR(1),
+           2  PDS_TIME_CHANGED_M         CHAR(1),
+           2  PDS_CURRENT_LINES          FIXED BINARY(15),
+           2  PDS_INITIAL_LINES          FIXED BINARY(15),
+           2  PDS_CHANGED_LINES          FIXED BINARY(15),
+           2  PDS_USER_ID                CHAR(8);
+
+      /*****************************************************************
+       *                                                               *
+       *   PDS-TIME-CHANGED -H AND -M ARE UNSIGNED PACKED DECIMALS     *
+       *   THEY MUST TO CONVERTED TO SIGNED PACK DECIMAL TO USE THEM.  *
+       *   THE PDS_TIME_CONVERSION FUNCTION CAN BE USED FOR THAT.      *
+       *                                                               *
+       *   THIS CONVERSION MUST TAKE PLACE FOR BOTH THE -H AND =M      *
+       *   PDS-TIME-CHANGED- FIELDS.                                   *
+       *                                                               *
+       ****************************************************************/
+     DECLARE PDS_TIME_CONVERSION ENTRY RETURNS(CHAR(2));
+ PDS_TIME_CONVERSION:PROC(A_BYTE) RETURNS(CHAR(2));
+     DECLARE A_BYTE             CHAR(1);
+     DECLARE
+           PDS_FILLER1_PTR      POINTER,
+           PDS_FILLER4_PTR      POINTER,
+
+           PDS_TIME_WORK        FIXED DECIMAL(5,0) INITIAL(0),
+
+        1  PDS_FILLER1                  BASED(PDS_FILLER1_PTR),
+                10  FILLER2             CHAR(1),
+                10  PDS_TIME_CHAR       CHAR(1),
+                10  FILLER3             CHAR(1),
+        1  PDS_4_DIGIT_TIME             PIC '(4)9',
+        1  FILLER4                      BASED(PDS_FILLER4_PTR),
+                10  FILLER5             CHAR(1),
+                10  PDS_TIME            CHAR(2),
+                10  FILLER6             CHAR(1);
+
+     PDS_FILLER1_PTR = ADDR(PDS_TIME_WORK);
+     PDS_FILLER4_PTR = ADDR(PDS_4_DIGIT_TIME);
+
+     PDS_TIME_WORK = 0;
+     PDS_TIME_CHAR = A_BYTE;
+     PDS_4_DIGIT_TIME = PDS_TIME_WORK;
+     RETURN(PDS_TIME);
+ END PDS_TIME_CONVERSION;
+ /********************** GETPDSPA V1.2.0  END *************************/

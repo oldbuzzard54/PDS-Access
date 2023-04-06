@@ -1,4 +1,3 @@
-# PDS-Access
 PDS-Access is a subprogram for Hercules/Hyperion programmers to 
 access PDS (Partioned Data Set) directory and members from COBOL
 and PL/1 programs.  Three functional programs are included as

@@ -1,0 +1,36 @@
+﻿     /******************* DATECNVP V1.0.0 *****************************
+      *****************************************************************
+      *                                                               *
+      * NAME: DATECNVP - PARM LIST DEFINITIONS FOR DATECNV            *
+      *                                                               *
+      * NOTE: THERE IS A COBOL VERSION OF THIS.  THEY SHOULD BE KEPT  *
+      *       IN SYNC.                                                *
+      *                                                               *
+      *****************************************************************
+      *                                                               *
+      *  (C) COPYRIGHT 2023 EDWARD G LISS   ALL RIGHTS RESERVED       *
+      *                                                               *
+      *  THIS SOURCE CODE AS WELL AS ANY OBJECT CODE RESULTING FROM   *
+      *  THIS SOURCE CODE MAY BE DISTRIBUTED FREELY PROVIDED NO FEE   *
+      *  IS CHARGED AND FOR NON-COMERCIAL PURPOSES.                   *
+      *                                                               *
+      *  FOR COMMERCIAL DISTRIBUTION RIGHTS, CONTACT THE COPYRIGHT    *
+      *  OWNER.                                                       *
+      *                                                               *
+      *****************************************************************
+      *                                                               *
+      * REVISION HISTORY                                              *
+      * ------  ----------------------------------------------------- *
+      * V1.1.0  INITIAL VERSION.                                      *
+      *                                                               *
+      ****************************************************************/
+
+      DECLARE
+        1  DATECNV_PARM               STATIC,
+           5  DC_RETURN_CODE          FIXED BINARY(31),
+           5  DC_INPUT_FORMAT         CHAR(8),
+           5  DC_INPUT_DATE           CHAR(10),
+           5  DC_OUTPUT_FORMAT        CHAR(8),
+           5  DC_OUTPUT_DATE          CHAR(10);
+
+      /****************** DATECNVP V1.0.0  END ***********************/
