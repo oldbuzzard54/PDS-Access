@@ -1,19 +1,23 @@
-PDS-Access is a subprogram for Hercules/Hyperion programmers to 
-access PDS (Partioned Data Set) directory and members from COBOL
-and PL/1 programs.  Three functional programs are included as
-samples of using the subroutines.  Two of them convert a PDS to
-IEBUPDTE input.  The third scans a PDS for one or more strings
-and produces a report listing the records in the PDS that match
-the string(s).
+                                       ASCII VERSION DECEMBER 18, 2025
+PDS-ACCESS IS SET OF SUBROUTINES FOR HERCULES/HYPERION PROGRAMMERS TO
+ACCESS PDS (PARTIONED DATA SET) DIRECTORY AND MEMBERS FROM COBOL
+AND PL/1 PROGRAMS.  THREE FUNCTIONAL PROGRAMS ARE INCLUDED AS
+SAMPLES OF USING THE SUBROUTINE.  TWO OF THEM CONVERT A PDS TO
+IEBUPDTE INPUT.  THE THIRD SCANS A PDS FOR ONE OR MORE STRINGS
+AND PRODUCES A REPORT LISTING THE RECORDS IN THE PDS THAT MATCH
+THE STRING(S).
 
-INSTALLING PDS-Access
+INSTALLING PDS-ACCESS
 =====================
-The JCL to install can be found in the file Receive.jcl.  This JCL uses
-the userid of HERC01 and create several files on DASD volume PUB000.
-Adjust the user id and volume if desired and submit.  All steps should
-end with CC=0000.
+1) SKIP TO STEP 4 IF YOU ALREADY DOWNLOADED PDSACES.ZIP.
+2) ON TK5, CREATE A DATSET TSOID.PDSACES.ZIP WITH DCB
+   RECFM=B,LRECL=15046,BLKSIZE=15050.
+3) USING BINARY FILE TRANSFER, UPLOAD PDSACES.ZIP TO THE DATASET
+   CREATED IN STEP 2.
+4) USING RPF OPTION 3.4, FIND THE PDSACES.ZIP AND BROWSE IT.
+5) EDIT MEMBER RECEIVE.  MAKE CHANGES AS INDICATED IN THE COMMENTS.
+6) SUBMIT THE JOB.  NOTE THE CHANGES WILL NOT BE SAVED.
 
-EXECUTING PDS-Access
+EXECUTING PDS-ACCESS
 =====================
-The JCL for run the sample programs can be found int TEST.jcl.
-
+THE JCL FOR RUN THE SAMPLE PROGRAMS CAN BE FOUND INT TEST.JCL.

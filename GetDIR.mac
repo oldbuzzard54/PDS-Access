@@ -1,0 +1,68 @@
+         MACRO
+&NAME    GETDIR &FUNC=,&DDN=,&MEM=,&STATS=
+*    GETDIR V2
+         AIF   (T'&FUNC EQ 'O').NOFUNC
+         AIF   ('&FUNC' EQ 'CLOSE').FCLOSE
+         AIF   ('&FUNC' EQ 'RESET').FRESET
+         AIF   (T'&DDN EQ 'O' AND T'&MEM EQ 'O').NOOPT
+         AIF   (T'&DDN NE 'O' AND T'&MEM NE 'O').NOOPT
+         AIF   ('&FUNC' EQ 'OPEN').FOPEN
+         AIF   ('&FUNC' EQ 'GET' AND T'&MEM EQ '0').NOOPT
+         AIF   ('&FUNC' EQ 'GET').FGET
+         MNOTE 12,'*** INVALID FUNC ***'
+         MEXIT
+.NOFUNC  ANOP
+         MNOTE 12,'*** FUNC MUST BE SPECIFIED ***'
+         MEXIT
+.NODCB   ANOP
+         MNOTE 12,'*** DCB MUST BE SPECIFIED ***'
+         MEXIT
+.NOOPT   ANOP
+         MNOTR 12,'*** DDN OR MEM REQUIRED ***'
+         MEXIT
+.FOPEN   ANOP
+         AIF   (T'&DDN NE 'O').OKOPEN
+         MNOTE 12,'*** OPEN MUST HAVE A DCB ***'
+         MEXIT
+.OKOPEN  ANOP
+         CNOP  0,4
+&NAME    BAL   1,*+12
+         DC    AL2(1,1)        OPEN FUNC
+         DC    AL1(128)
+         DC    AL3(&DDN)       DDNAME
+         AGO   .OK
+.FGET    ANOP
+         AIF   (T'MEM NE 'O').OKGET
+         MNOTE 12,'*** GET MUST HAVE A PLACE TO PUT THE MEM NAME ***'
+         MEXIT
+.OKGET   ANOP
+         CNOP  0,4
+         AIF   (T'&STATS NE 'O').STATS
+&NAME    BAL   1,*+12
+         DC    AL2(1,2)        GET FUNC
+         DC    AL1(128)
+         DC    AL3(&MEM)       MEMBER NAME RETURN ALL X'FF' AT END
+         AGO   .OK
+.STATS   ANOP
+&NAME    BAL   1,*+16
+         DC    AL2(1,2)        GET FUNC
+         DC    A(&MEM)         MEMBER NAME RETURN ALL X'FF' AT END
+         DC    AL1(128)
+         DC    AL3(&STATS)     AREA FOR STATS
+         AGO   .OK
+.FCLOSE  ANOP
+         CNOP  0,4
+&NAME    BAL   1,*+8
+         DC    AL1(128,1)
+         DC    AL2(3)    CLOSE FUNC
+         AGO   .OK
+.FRESET  ANOP
+         CNOP  0,4
+&NAME    BAL   1,*+8
+         DC    AL1(128,1)
+         DC    AL2(4)    RESET FUNC
+.OK      ANOP
+         L     15,=V(GETDIR)
+         BALR  14,15
+* END GETDIR
+         MEND

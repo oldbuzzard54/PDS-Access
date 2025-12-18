@@ -25,7 +25,10 @@ GETPDS   TITLE 'SUBROUTINE TO READ PARTITIONED DATASET MEMBERS         *
 *          DOCUMENTATION FOR PL/I CALLERS.                            *
 *                                                                     *
 * V1.3.0 - ADDED CODE TO RETURN THE STATS, IF PRESENT, IN THE         *
-*          FIRST 30 BYTES OF THE INPUT AREA.                      .   *
+*          FIRST 30 BYTES OF THE INPUT AREA.                          *
+*                                                                     *
+* V2.0.0 - REVISED TO USE NEW VERSION OF GETDIR.                      *
+*                                                                     *
 *                                                                     *
 ***********************************************************************
 ***********************************************************************
@@ -34,8 +37,8 @@ GETPDS   TITLE 'SUBROUTINE TO READ PARTITIONED DATASET MEMBERS         *
 *                                                                     *
 * NCZ93205.1 PROGRAM DESCRIPTION                                      *
 *                                                                     *
-* THIS PROGRAM CAN BE CALLED AS A SUBROUTINE FROM ASSEMBLER, COBOL OR *
-* COBOL OR PL/I TO PROVIDE READ ACCESS TO MEMBER(S) OF A PDS. THE     *
+* THIS PROGRAM CAN BE CALLED AS A SUBROUTINE FROM ASSEMBLER, COBOL    *
+* OR PL/I TO PROVIDE READ ACCESS TO MEMBER(S) OF A PDS. THE           *
 * MEMBER NAME(S) MAY BE SPECIFIED DYNAMICALLY VIA THE PARAMETERS.     *
 * THUS THIS PROGRAM ENABLES A CALLING PROGRAM TO ACCESS MANY MEMBERS  *
 * OF A PDS WHEN THE NAMES OF THE MEMBERS ARE NOT KNOWN UNTIL EXECUTION*
@@ -232,10 +235,10 @@ GETPDS   TITLE 'SUBROUTINE TO READ PARTITIONED DATASET MEMBERS         *
 *              R6 -      WORK: -> RECORD                              *
 *              R7 -      -> P4 (RETURN CODE PL/1 ONLY)                *
 *              R8 -                                                   *
-*              R9                                                     *
+*              R9 -      -> PDSDIR DCB                                *
 *              R10 -                                                  *
 *              R11 -     BASE REGISTER                                *
-*              R12 -     -> DCB                                       *
+*              R12 -     -> DCBD                                      *
 *              R13 -     SAVE AREA                                    *
 *              R14 -                                                  *
 *              R15 -                                                  *
@@ -244,7 +247,7 @@ GETPDS   TITLE 'SUBROUTINE TO READ PARTITIONED DATASET MEMBERS         *
          TITLE 'SUBROUTINE TO READ PARTITIONED DATASET MEMBERS         *
                - PROGRAM CODE'
 GETPDS   ESTART TYPE=START,DESC='GETPDS - ACCESS PDS MEMBERS',         X
-               VER='1.3.0',BASE=R11,REGS=YES,PLIF=GETPDSP
+               VER='2.0.0',BASE=R11,REGS=YES,PLIF=GETPDSP
          ENTRY NCZ93205
 NCZ93205 EQU   GETPDS
          BNE   NOTPLI
@@ -256,11 +259,10 @@ NCZ93205 EQU   GETPDS
          B     COMM
 NOTPLI   EQU   *
          LM    R2,R4,0(R1)
-         LA    R7,PLIRC                PL1 ONLY
+         LA    R7,PLIRC                NOT PL1 ONLY
 COMM     EQU   *
          LA    R12,PDS
          USING IHADCB,R12
-******** LM    R2,R4,0(R1)
          SPACE
          L     R15,0(R2)               GET FUNCTION CODE
          CH    R15,=H'0'               Q - OPEN ?
@@ -281,29 +283,29 @@ COMM     EQU   *
 P01      DS    0H
          TM    DCBOFLGS,DCBOFOPN        Q - DATASET OPEN ?
          BO    P99                      Y BOMB OUT
-*********************************** START FIX V1.2.0 ****************
-         L     R8,=A(@GETDR1)
-         MVI   0(R8),X'00'
-         MVC   1(256,R8),0(R8)          CLEAR OUT WORKING STORAGE
-**************************************END FIX V1.2.0 ****************
          CLC   0(8,R3),=CL8' '          DDNAME SPECIFIED?
          BE    P01GO                    NO, DEFAULT=PDS
          MVC   PDSDDNAM(8),0(R3)        MOVE DDNAME TO DCB
 P01GO    EQU   *
+         MVC   DIRDDNAM,PDSDDNAM
          OPEN  (PDS,INPUT)              OPEN IT
          TM    DCBOFLGS,DCBOFOPN        Q - OK ?
          BZ    P98                      N EXIT RC=4
          CLI   DCBDSORG,DCBDSGPO        Q - IS THIS A PDS ?
          BNE   P0105                    N GO CLOSE
          TM    DCBRECFM,X'FF'-(DCBRECF+DCBRECBR+DCBRECCA) Q - RECFM ?
-         BZ    P0110                    OK
+         LTR   R15,R15
+         BZ    P0110                    BRANCH IF NO PROBLEM
          SPACE
 P0105    EQU   *
          CLOSE PDS
+******   CLOSE ((R9))
          B     P99
-P0110    LH    R0,DCBBLKSI
+P0110    EQU   *
+         LH    R0,DCBBLKSI
          GETMAIN R,LV=(0)               GET A BUFFER
          ST    R1,BUFA
+         GETDIR FUNC=OPEN,DDN=DIRDDNAM
          B     P97                      EXIT OK
 **********************************************************************
          SPACE
@@ -378,13 +380,14 @@ P04      DS    0H
          L     R5,BUFA
          FREEMAIN R,LV=(0),A=(5)
          CLOSE PDS
+         GETDIR FUNC=CLOSE
          B     P97
 **********************************************************************
 *        START SEQUENTIAL DIR PROCESS
 P05      DS    0H
          TM    DCBOFLGS,DCBOFOPN        Q - DATASET OPEN ?
          BZ    P99                      N BOMB OUT
-         MVC   PDSRELAD(4),=4X'00'      RESET DIRECTORY TO START
+         GETDIR FUNC=RESET              RESET DIRECTORY TO START
          B     P97
          SPACE
 **********************************************************************
@@ -392,10 +395,12 @@ P05      DS    0H
 P06      DS    0H
          TM    DCBOFLGS,DCBOFOPN        Q - DATASET OPEN ?
          BZ    P99                      N BOMB OUT
-GETD     GETDIR PDS,EODAD=P06EOF
-         MVC   0(8,R3),0(R1)            SAVE MEMBER NAME AND TTR
+GETD     GETDIR FUNC=GET,MEM=MEMBNAME,STATS=STATSREC
+         CLI   MEMBNAME,X'FF'           END OF DIRECTORY?
+         BE    P98                        YES, BRANCH.
+         MVC   0(8,R3),MEMBNAME         SAVE MEMBER NAME
          USING PDSSTATS,R10
-         LA    R10,11(,R1)              SKIP MEM NAME AND TTR
+         LA    R10,STATSREC             GET ADDR OF STATS
          MVI   0(R4),C' '               CLEAR 30 BYTES OF
          MVC   1(PDSSTATL-1,R4),0(R4)      DATA AREA
          CLI   PDSC,X'0F'               15 HALFWORDS?
@@ -414,7 +419,7 @@ GETD     GETDIR PDS,EODAD=P06EOF
          BNZ   NOTSTAT
          MVC   0(PDSSTATL,R4),PDSSTATS
          LR    R10,R4                    STATS IN INPUT AREA
-         CLI   PDSDATEC,X'01'                                                                                                                                                                                                          M
+         CLI   PDSDATEC,X'01'
          BE    CENT20C
          CLI   PDSDATEC,X'00'
          BNE   NOTSTAT
@@ -422,7 +427,7 @@ GETD     GETDIR PDS,EODAD=P06EOF
          B     CHECKU
 CENT20C  MVI   PDSDATEC,X'20'
 CHECKU   EQU   *
-         CLI   PDSDATEU,X'01'                                                                                                                                                                                                          M
+         CLI   PDSDATEU,X'01'
          BE    CENT20U
          CLI   PDSDATEU,X'00'
          BNE   NOTSTAT
@@ -444,7 +449,11 @@ P99      MVC   0(4,R7),=F'8'
          SPACE
 PDS      DCB   DDNAME=PDS,DSORG=PO,MACRF=(R),EODAD=P03EOM
 PDSRELAD EQU   PDS                      CURRENT TTRN
-PDSDDNAM EQU   PDS+40                                            *JLM*
+DDNAMOFS EQU   X'28'                    OFFSET IN DCB FOR DDNAME
+PDSDDNAM EQU   PDS+DDNAMOFS                                      *JLM*
+DIRDDNAM DC    CL8' '                   ALTERNATE DDNAME
+MEMBNAME DS    CL8
+STATSREC DS    CL80
 FLAGS    DC    X'00'
 EOM      EQU   X'80'                    REACHED END OF CURRENT MEMBER
 DOREAD   EQU   X'40'                    INDICATES CURRENT BLOCK IS     *

@@ -20,13 +20,14 @@
                                  THE ./ ADD NAME=,PARM
              1.2.0    03/19/2023 CODE CLEANUP AND ADDED ISPF/RPF
                                  STATS TO REPORT
+             1.4.0    12/05/2025 RECOMPILED TO PICK UP NEW GETPDS
 
  ********************************************************************/
 
  PDSUNLD:PROCEDURE(EXEC_PARM) OPTIONS(MAIN);
 
-     DECLARE EXEC_PARM CHAR(100) VARYING;
-     DECLARE CARD_FILE STREAM OUTPUT FILE;
+     DECLARE EXEC_PARM   CHAR(100) VARYING;
+     DECLARE CARDOUT     STREAM OUTPUT FILE;
      DECLARE
         1  WS_MEMBER_COUNT       FIXED BINARY(31) ALIGNED INITIAL(0);
 
@@ -47,23 +48,23 @@
 1    ON ENDPAGE(SYSPRINT)
      BEGIN;
         PAGE_NUM = PAGE_NUM + 1;
-        PUT PAGE EDIT('PDSUNLDP V1.2.0','PAGE ',PAGE_NUM)
+        PUT PAGE EDIT('PDSUNLDP V1.4.0','PAGE ',PAGE_NUM)
                      (A,COL(110),A,P'ZZ9');
         IF PAGE_NUM = 1 &
            LENGTH(EXEC_PARM)>0 THEN
               PUT SKIP EDIT(' WITH PARM=',EXEC_PARM) (A,A);
         PUT SKIP EDIT('MEMBER    USERID  CREATED    UPDATED      TIME',
                       '   COMMENTS') (A,A);
-        PUT SKIP;
+        PUT SKIP(2);
      END;
      SIGNAL ENDPAGE(SYSPRINT);
-     OPEN FILE(CARD_FILE) OUTPUT TITLE('CARDOUT');
+     OPEN FILE(CARDOUT);
      CALL P100_OPEN_PDS;
      CALL P600_CLOSE_PDS;
 
      PUT SKIP EDIT('MEMBER PROCESSED=',WS_MEMBER_COUNT)(A,F(10));
-     CLOSE FILE(CARD_FILE);
-     PUT SKIP(2) EDIT('PDSUNLDP V1.2.0 ENDED') (A);
+     CLOSE FILE(CARDOUT);
+     PUT SKIP(2) EDIT('PDSUNLDP V1.4.0 ENDED') (A);
 
 -P100_OPEN_PDS:PROC;
      PDSGET_REQUEST = PDSGET_REQUEST_OPEN;
@@ -151,21 +152,21 @@
              IF NAME_WORK_CHAR(CHAR_INDEX) > ' ' THEN
                  NAME_STR=NAME_STR || NAME_WORK_CHAR(CHAR_INDEX);
          END;
-         PUT FILE(CARD_FILE) EDIT('./  ADD NAME=',NAME_STR)
+         PUT FILE(CARDOUT) EDIT('./  ADD NAME=',NAME_STR)
                                  (A);
          IF LENGTH(EXEC_PARM)>0 THEN
-            PUT FILE(CARD_FILE) EDIT(',',EXEC_PARM)
+            PUT FILE(CARDOUT) EDIT(',',EXEC_PARM)
                                  (A,A);
          DO WHILE (PDSGET_RETURN_CODE = 0);
-            PUT FILE(CARD_FILE) EDIT(PDSGET_RECORD80) (SKIP,A);
+            PUT FILE(CARDOUT) EDIT(PDSGET_RECORD80) (SKIP,A);
             REC_COUNT=REC_COUNT+1;
             CALL P900_CALL_GETPDSP;
          END;
      END;
 
      IF PDSGET_RETURN_CODE = 4 THEN
-         PUT EDIT('END OF MEMBER (RC=4)',REC_COUNT,' RECORDS READ')
-                 (X(2),A,F(5),A);
+         PUT EDIT(REC_COUNT,' RECORDS COPIED')
+                 (X(2),F(5),A);
      ELSE
          IF PDSGET_RETURN_CODE = 8 THEN
          DO;
@@ -193,7 +194,11 @@
 
      PDSGET_PTR = ADDR(PDSGET_RECORD80);
      PUT SKIP EDIT(PDSGET_MEMBER,PDS_USER_ID) (A,X(2),A);
-     IF PDS_USER_ID = (8)' ' THEN RETURN;
+     IF PDS_USER_ID = (8)' ' THEN
+     DO;
+        PUT EDIT(' ') (COL(47),A);      /* ALIGN FOR NO STATS */
+        RETURN;
+     END;
 
      DC_INPUT_FORMAT =  'YYYYDDD ';
      DATE_CONV       =   PDS_DATE_CREATED;
@@ -221,6 +226,12 @@
 
  END P700_PROCESS_STATS;
 -P900_CALL_GETPDSP:PROC;
+     ON ERROR
+     BEGIN;
+        PUT SKIP DATA(PDSGET_REQUEST,PDSGET_MEMBER,
+                      PDSGET_RETURN_CODE);
+        STOP;
+     END;
      CALL GETPDSP (PDSGET_REQUEST_1,
                    PDSGET_MEMBER_1,
                    PDSGET_RECORD80_1,

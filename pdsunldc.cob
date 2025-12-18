@@ -18,11 +18,16 @@
                                  IS GENERATED.  IF AN EXEC PARM
                                  IS PASSED, IT WILL BE ADDED TO
                                  THE ./ ADD NAME=,PARM
-             1.2.0    03/21/2021 CLEANED UP CODE AND ADDED
+             1.4.0    03/21/2021 CLEANED UP CODE AND ADDED
                                  ISPF/RPF STATS TO REPORT.
+                      12/05/2025 ADD RECORD COUNTS TO REPORT AND
+                                 ADDED THE ADVANCING OPTION TO
+                                 REPORT.
 
        ENVIRONMENT DIVISION.
        CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+           C01 IS TOP-OF-PAGE.
        SOURCE-COMPUTER. IBM-370.
        OBJECT-COMPUTER. IBM-370.
 
@@ -48,6 +53,7 @@
        WORKING-STORAGE SECTION.
 
        77  WS-MEMBER-COUNT             PIC 9(9)            VALUE +0.
+       77  WS-RECORD-COUNT             PIC S9(9) COMP SYNC VALUE +0.
        77  WS-CHAR-INDEX               PIC S9(4) COMP SYNC.
        77  WS-PARM-INDEX               PIC S9(4) COMP SYNC.
        77  WS-LINE-CNT                 PIC S9(4) COMP SYNC VALUE +57.
@@ -62,7 +68,7 @@
 
        01  PH-PAGE-HEADING.
            05  FILLER                  PIC X(100) VALUE
-               '1PDSUNLDC V1.2.0'.
+               '1PDSUNLDC V1.4.0'.
        01  PH-LINE-2.
            05  FILLER                   PIC X(49)  VALUE
                '0MEMBER    USERID    CREATED    UPDATED      TIME'.
@@ -82,7 +88,10 @@
            05  DL-TIME-SEP              PIC X.
            05  DL-TIME-M                PIC 99.
            05  FILLER                   PIC XX.
-           05  DL-COMMENTS              PIC X(50).
+           05  DL-RECORD-COUNT          PIC Z(4)9.
+           05  FILLER                   PIC X.
+           05  DL-DETAIL-DESC           PIC X(15).
+           05  DL-COMMENTS              PIC X(29).
 
        01  WS-DATE-EDIT-01.
            05  WS-DATE-EDIT-X           PIC X(8).
@@ -118,7 +127,7 @@
            PERFORM 600-CLOSE-PDS.
 
            DISPLAY 'MEMBER PROCESSED=' WS-MEMBER-COUNT.
-           DISPLAY 'PDSUNLOD CONCLUDED'.
+           DISPLAY 'PDSUNLDC CONCLUDED'.
            CLOSE CARD-FILE, PRINT-FILE.
 
            GOBACK.
@@ -162,7 +171,7 @@
            MOVE PDSGET-REQUEST-NEXT  TO PDSGET-REQUEST.
            PERFORM 900-CALL-PDSGET.
            IF RETURN-CODE EQUAL 0
-               DISPLAY 'MEMBER NAME=' PDSGET-MEMBER
+      *********DISPLAY 'MEMBER NAME=' PDSGET-MEMBER
                PERFORM 400-LOCATE-MEMBER
                MOVE ZERO TO RETURN-CODE
            ELSE
@@ -177,11 +186,12 @@
            MOVE PDSGET-REQUEST-LOCATE TO PDSGET-REQUEST.
            PERFORM 900-CALL-PDSGET.
            IF RETURN-CODE EQUAL 0
+               MOVE ZERO TO WS-RECORD-COUNT
                PERFORM 700-PROCESS-STATS THRU 700-EXIT
                PERFORM 500-READ-MEMBER
            ELSE
            IF RETURN-CODE EQUAL 4
-               DISPLAY 'MEMBER NOT FOUND (RC=4)'
+               DISPLAY PDSGET-MEMBER ' MEMBER NOT FOUND (RC=4)'
            ELSE
            IF RETURN-CODE EQUAL 8
                DISPLAY 'LOCATE FAILED (RC=8); EXECUTION TERMINATED'
@@ -199,7 +209,7 @@
            PERFORM 510-READ-MEMBER
                UNTIL RETURN-CODE NOT EQUAL 0.
            IF RETURN-CODE EQUAL 4
-               DISPLAY 'END OF FILE ON MEMBER (RC=4)'
+               PERFORM 800-PRINT-DETAIL
            ELSE
            IF RETURN-CODE EQUAL 8
                DISPLAY 'READ FAILED (RC=8); EXECUTION TERMINATED'
@@ -227,6 +237,8 @@
        510-READ-MEMBER.
            WRITE WS-CARD-OUT FROM PDSGET-RECORD80.
            PERFORM 900-CALL-PDSGET.
+123456**** IF RETURN-CODE = 0
+              ADD 1 TO WS-RECORD-COUNT.
 
        600-CLOSE-PDS.
            MOVE PDSGET-REQUEST-CLOSE TO PDSGET-REQUEST.
@@ -243,7 +255,7 @@
            MOVE PDSGET-MEMBER      TO DL-MEMBER.
            MOVE PDS-USER-ID        TO DL-USERID.
            IF PDS-USER-ID = SPACES
-               GO TO 700-PRINT.
+               GO TO 700-EXIT.
            MOVE PDS-DATE-CREATED   TO DC-INPUT-DATE.
            MOVE 'YYYYDDD '         TO DC-INPUT-FORMAT.
            MOVE 'YYYYMMDD'         TO DC-OUTPUT-FORMAT.
@@ -269,17 +281,21 @@
            MOVE PDS-TIME           TO DL-TIME-M.
            MOVE ':'                TO DL-TIME-SEP.
 
-       700-PRINT.
-           PERFORM 800-PRINT-DETAIL.
        700-EXIT.
            EXIT.
 
        800-PRINT-DETAIL.
            IF WS-LINE-CNT > WS-LINE-MAX
                WRITE PF-PRINT-LINE FROM PH-PAGE-HEADING
+                     AFTER ADVANCING TOP-OF-PAGE
                WRITE PF-PRINT-LINE FROM PH-LINE-2
+                     AFTER ADVANCING 2 LINES
                MOVE 3     TO WS-LINE-CNT.
-           WRITE PF-PRINT-LINE FROM DL-DETAIL-LINE.
+
+           MOVE WS-RECORD-COUNT   TO DL-RECORD-COUNT.
+           MOVE 'RECORDS READ'    TO DL-DETAIL-DESC.
+           WRITE PF-PRINT-LINE FROM DL-DETAIL-LINE
+                     AFTER ADVANCING 1 LINES.
            ADD 1 TO WS-LINE-CNT.
 
        900-CALL-PDSGET.
